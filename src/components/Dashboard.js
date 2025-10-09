@@ -1,5 +1,6 @@
 import React from 'react';
 import mealService from '../services/meals';
+import TipsWidget from './TipsWidget';
 
 const Dashboard = ({ onNavigate, currentUser }) => {
   const userName = currentUser?.name?.split(' ')[0] || 'User';
@@ -8,8 +9,29 @@ const Dashboard = ({ onNavigate, currentUser }) => {
   const totalCalories = mealService.getTotalCaloriesToday(userId);
   
   return (
-    <div style={{ padding: '32px 0', minHeight: 'calc(100vh - 80px)' }}>
-      <div className="container">
+    <div style={{ display: 'flex', minHeight: 'calc(100vh - 80px)' }}>
+      <div style={{
+        width: '280px',
+        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
+        borderRight: '1px solid #e0e0e0',
+        padding: '32px 20px'
+      }}>
+        <h3 style={{ 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          color: '#4CAF50',
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <i className="fas fa-lightbulb"></i>
+          Healthy Tips
+        </h3>
+        <TipsWidget />
+      </div>
+      
+      <div style={{ flex: 1, padding: '32px' }}>
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '8px' }}>
             Good morning, {userName}!

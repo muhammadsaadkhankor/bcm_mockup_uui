@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
+import mealService from '../services/meals';
+import TipsWidget from './TipsWidget';
 
-const History = ({ onNavigate }) => {
+const History = ({ onNavigate, currentUser }) => {
   const [activeFilter, setActiveFilter] = useState('Today');
+  const userId = currentUser?.id || 'guest';
+  const userMeals = mealService.getTodaysMeals(userId);
+  const totalCalories = mealService.getTotalCaloriesToday(userId);
   
   const mealHistory = {
-    'Today': [
-      { time: '8:30 AM', name: 'Oatmeal with berries', calories: 320, type: 'Breakfast' },
-      { time: '12:45 PM', name: 'Grilled chicken salad', calories: 450, type: 'Lunch' },
-      { time: '3:15 PM', name: 'Apple and almonds', calories: 180, type: 'Snack' },
-      { time: '7:20 PM', name: 'Salmon with vegetables', calories: 580, type: 'Dinner' }
-    ],
+    'Today': userMeals.length > 0 ? userMeals : [],
     'Week': [
       { date: 'Today', calories: 1530, meals: 4 },
       { date: 'Yesterday', calories: 1890, meals: 5 },
@@ -150,8 +150,29 @@ const History = ({ onNavigate }) => {
   };
 
   return (
-    <div style={{ padding: '32px 0', minHeight: 'calc(100vh - 80px)' }}>
-      <div className="container">
+    <div style={{ display: 'flex', minHeight: 'calc(100vh - 80px)' }}>
+      <div style={{
+        width: '280px',
+        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
+        borderRight: '1px solid #e0e0e0',
+        padding: '32px 20px'
+      }}>
+        <h3 style={{ 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          color: '#4CAF50',
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <i className="fas fa-lightbulb"></i>
+          Healthy Tips
+        </h3>
+        <TipsWidget />
+      </div>
+      
+      <div style={{ flex: 1, padding: '32px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <div style={{ marginBottom: '32px' }}>
             <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '8px' }}>
@@ -204,15 +225,15 @@ const History = ({ onNavigate }) => {
                   gap: '16px'
                 }}>
                   <div>
-                    <div style={{ fontSize: '24px', fontWeight: '700' }}>1,530</div>
+                    <div style={{ fontSize: '24px', fontWeight: '700' }}>{totalCalories}</div>
                     <div style={{ fontSize: '12px', opacity: 0.9 }}>Calories</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: '600' }}>4</div>
+                    <div style={{ fontSize: '20px', fontWeight: '600' }}>{userMeals.length}</div>
                     <div style={{ fontSize: '12px', opacity: 0.9 }}>Meals</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '20px', fontWeight: '600' }}>76%</div>
+                    <div style={{ fontSize: '20px', fontWeight: '600' }}>{Math.round((totalCalories / 2000) * 100)}%</div>
                     <div style={{ fontSize: '12px', opacity: 0.9 }}>Goal</div>
                   </div>
                 </div>

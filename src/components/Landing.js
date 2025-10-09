@@ -156,7 +156,7 @@ const Landing = ({ onLogin, onNavigate }) => {
             </div>
             <div style={{ textAlign: 'center' }}>
               <i className="fas fa-target" style={{ fontSize: '32px', color: '#4CAF50', marginBottom: '8px' }}></i>
-              <p style={{ fontSize: '14px', color: '#666' }}>Goal Setting</p>
+              {/* <p style={{ fontSize: '14px', color: '#666' }}>Goal Setting</p> */}
             </div>
           </div>
         </div>
