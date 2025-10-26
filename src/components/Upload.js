@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
-import TipsWidget from './TipsWidget';
+import { useTheme } from '../context/ThemeContext';
+import calorieEstimationService from '../services/calorieEstimation';
 
 const Upload = ({ onNavigate }) => {
+  const { colors } = useTheme();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
@@ -16,10 +18,16 @@ const Upload = ({ onNavigate }) => {
         setUploadedImage(e.target.result);
         setIsAnalyzing(true);
         
-        setTimeout(() => {
-          setIsAnalyzing(false);
-          onNavigate('results');
-        }, 3000);
+        calorieEstimationService.estimateCalories(e.target.result)
+          .then(estimation => {
+            localStorage.setItem('lastEstimation', JSON.stringify(estimation));
+            setIsAnalyzing(false);
+            onNavigate('results');
+          })
+          .catch(error => {
+            console.error('Estimation failed:', error);
+            setIsAnalyzing(false);
+          });
       };
       reader.readAsDataURL(file);
     }
@@ -42,7 +50,7 @@ const Upload = ({ onNavigate }) => {
     }
   };
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     
@@ -64,10 +72,17 @@ const Upload = ({ onNavigate }) => {
       setShowCamera(false);
       
       setIsAnalyzing(true);
-      setTimeout(() => {
-        setIsAnalyzing(false);
-        onNavigate('results');
-      }, 3000);
+      
+      calorieEstimationService.estimateCalories(imageData)
+        .then(estimation => {
+          localStorage.setItem('lastEstimation', JSON.stringify(estimation));
+          setIsAnalyzing(false);
+          onNavigate('results');
+        })
+        .catch(error => {
+          console.error('Estimation failed:', error);
+          setIsAnalyzing(false);
+        });
     }
   };
 
@@ -83,37 +98,16 @@ const Upload = ({ onNavigate }) => {
 
 
   return (
-    <div style={{ display: 'flex', minHeight: 'calc(100vh - 80px)' }}>
-      <div style={{
-        width: '280px',
-        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
-        borderRight: '1px solid #e0e0e0',
-        padding: '32px 20px'
-      }}>
-        <h3 style={{ 
-          fontSize: '18px', 
-          fontWeight: '600', 
-          color: '#4CAF50',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <i className="fas fa-lightbulb"></i>
-          Healthy Tips
-        </h3>
-        <TipsWidget />
-      </div>
-      
-      <div style={{ flex: 1, padding: '32px' }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '16px' }}>
+    <div className="mobile-safe-area" style={{ padding: '20px 0', minHeight: '100vh', background: colors.background }}>
+      <div className="container">
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: '32px', fontWeight: '700', color: colors.text, marginBottom: '16px' }}>
             Add Your Meal
           </h1>
-          <p style={{ color: '#666', fontSize: '16px', marginBottom: '32px' }}>
+          <p style={{ color: colors.textSecondary, fontSize: '16px', marginBottom: '32px' }}>
             Take a photo or upload an image of your food for AI analysis
           </p>
-              <div className="card" style={{ marginBottom: '32px' }}>
+              <div className="card" style={{ marginBottom: '32px', background: colors.surface, border: `1px solid ${colors.border}` }}>
             {showCamera ? (
               <div>
                 <video 
@@ -153,16 +147,16 @@ const Upload = ({ onNavigate }) => {
             ) : !uploadedImage ? (
               <div style={{ 
                 padding: '64px 32px',
-                border: '2px dashed #ddd',
+                border: `2px dashed ${colors.border}`,
                 borderRadius: '12px',
-                background: '#fafafa'
+                background: colors.input
               }}>
                 <i className="fas fa-camera" style={{ 
                   fontSize: '48px', 
                   color: '#ccc', 
                   marginBottom: '24px' 
                 }}></i>
-                <p style={{ fontSize: '18px', color: '#666', marginBottom: '24px' }}>
+                <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '24px' }}>
                   No image selected
                 </p>
                 <input
@@ -261,33 +255,33 @@ const Upload = ({ onNavigate }) => {
           }}>
             <div style={{ 
               padding: '16px',
-              background: '#f8f9fa',
+              background: colors.input,
               borderRadius: '8px',
               textAlign: 'center'
             }}>
               <i className="fas fa-brain" style={{ fontSize: '24px', color: '#4CAF50', marginBottom: '8px' }}></i>
-              <p style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>AI Recognition</p>
-              <p style={{ fontSize: '12px', color: '#666' }}>Advanced food identification</p>
+              <p style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px', color: colors.text }}>AI Recognition</p>
+              <p style={{ fontSize: '12px', color: colors.textSecondary }}>Advanced food identification</p>
             </div>
             <div style={{ 
               padding: '16px',
-              background: '#f8f9fa',
+              background: colors.input,
               borderRadius: '8px',
               textAlign: 'center'
             }}>
               <i className="fas fa-calculator" style={{ fontSize: '24px', color: '#FF9800', marginBottom: '8px' }}></i>
-              <p style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>Calorie Estimation</p>
-              <p style={{ fontSize: '12px', color: '#666' }}>Accurate nutrition analysis</p>
+              <p style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px', color: colors.text }}>Calorie Estimation</p>
+              <p style={{ fontSize: '12px', color: colors.textSecondary }}>Accurate nutrition analysis</p>
             </div>
             <div style={{ 
               padding: '16px',
-              background: '#f8f9fa',
+              background: colors.input,
               borderRadius: '8px',
               textAlign: 'center'
             }}>
               <i className="fas fa-chart-line" style={{ fontSize: '24px', color: '#2196F3', marginBottom: '8px' }}></i>
-              <p style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>Progress Tracking</p>
-              <p style={{ fontSize: '12px', color: '#666' }}>Automatic goal updates</p>
+              <p style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px', color: colors.text }}>Progress Tracking</p>
+              <p style={{ fontSize: '12px', color: colors.textSecondary }}>Automatic goal updates</p>
             </div>
           </div>
         </div>

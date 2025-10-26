@@ -1,62 +1,53 @@
-const initialUsers = [
-  {
-    id: 1,
-    email: "demo@bcm.com",
-    password: "demo123",
-    name: "Alex Johnson",
-    phone: "+1234567890",
-    dailyGoal: 2000,
-    createdAt: "2024-01-15"
-  }
-];
+import database from './database';
 
 class AuthService {
   constructor() {
-    this.users = JSON.parse(localStorage.getItem('bcm_users')) || initialUsers;
+    this.currentUser = null;
   }
 
-  signIn(emailOrPhone, password) {
-    const user = this.users.find(u => 
-      (u.email === emailOrPhone || u.phone === emailOrPhone) && u.password === password
-    );
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      return { success: true, user };
+  signUp(userData) {
+    try {
+      const newUser = database.createUser(userData);
+      this.currentUser = newUser;
+      localStorage.setItem('bcm_currentUser', JSON.stringify(newUser));
+      return newUser;
+    } catch (error) {
+      throw error;
     }
-    return { success: false, error: 'Invalid credentials' };
   }
 
-  createAccount(emailOrPhone, password, name) {
-    const isEmail = emailOrPhone.includes('@');
-    const isPhone = /^[+]?[0-9\s\-\(\)]+$/.test(emailOrPhone);
-    
-    if (this.users.find(u => u.email === emailOrPhone || u.phone === emailOrPhone)) {
-      return { success: false, error: 'Email or phone already exists' };
+  signIn(credentials) {
+    try {
+      const user = database.authenticateUser(credentials.email, credentials.password);
+      this.currentUser = user;
+      localStorage.setItem('bcm_currentUser', JSON.stringify(user));
+      return user;
+    } catch (error) {
+      throw error;
     }
-    
-    const newUser = {
-      id: this.users.length + 1,
-      email: isEmail ? emailOrPhone : '',
-      phone: isPhone ? emailOrPhone : '',
-      password,
-      name,
-      dailyGoal: 2000,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    
-    this.users.push(newUser);
-    localStorage.setItem('bcm_users', JSON.stringify(this.users));
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-    return { success: true, user: newUser };
-  }
-
-  getCurrentUser() {
-    const user = localStorage.getItem('currentUser');
-    return user ? JSON.parse(user) : null;
   }
 
   signOut() {
-    localStorage.removeItem('currentUser');
+    this.currentUser = null;
+    localStorage.removeItem('bcm_currentUser');
+  }
+
+  getCurrentUser() {
+    if (this.currentUser) {
+      return this.currentUser;
+    }
+    
+    const savedUser = localStorage.getItem('bcm_currentUser');
+    if (savedUser) {
+      this.currentUser = JSON.parse(savedUser);
+      return this.currentUser;
+    }
+    
+    return null;
+  }
+
+  isLoggedIn() {
+    return this.getCurrentUser() !== null;
   }
 }
 

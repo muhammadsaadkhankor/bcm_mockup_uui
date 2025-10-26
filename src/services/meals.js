@@ -1,35 +1,19 @@
-const defaultMeals = {
-  1: [ // demo user meals
-    { time: '8:30 AM', name: 'Oatmeal with berries', calories: 320, type: 'Breakfast', date: new Date().toISOString().split('T')[0] },
-    { time: '12:45 PM', name: 'Grilled chicken salad', calories: 450, type: 'Lunch', date: new Date().toISOString().split('T')[0] },
-    { time: '3:15 PM', name: 'Apple and almonds', calories: 180, type: 'Snack', date: new Date().toISOString().split('T')[0] }
-  ]
-};
+import database from './database';
 
 class MealService {
-  constructor() {
-    this.meals = JSON.parse(localStorage.getItem('bcm_meals')) || defaultMeals;
+  addMeal(userId, meal) {
+    return database.addMeal(userId, {
+      ...meal,
+      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    });
   }
 
   getUserMeals(userId) {
-    return this.meals[userId] || [];
-  }
-
-  addMeal(userId, meal) {
-    if (!this.meals[userId]) {
-      this.meals[userId] = [];
-    }
-    this.meals[userId].push({
-      ...meal,
-      date: new Date().toISOString().split('T')[0],
-      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    });
-    localStorage.setItem('bcm_meals', JSON.stringify(this.meals));
+    return database.getUserMeals(userId);
   }
 
   getTodaysMeals(userId) {
-    const today = new Date().toISOString().split('T')[0];
-    return this.getUserMeals(userId).filter(meal => meal.date === today);
+    return database.getTodaysMeals(userId);
   }
 
   getTotalCaloriesToday(userId) {

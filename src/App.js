@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
+import SplashScreen from './components/SplashScreen';
 import Landing from './components/Landing';
 import Dashboard from './components/Dashboard';
 import Upload from './components/Upload';
 import Results from './components/Results';
 import History from './components/History';
+import Profile from './components/Profile';
+import Settings from './components/Settings';
 import Navbar from './components/Navbar';
 import authService from './services/auth';
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState('landing');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -17,7 +22,7 @@ function App() {
     if (user) {
       setCurrentUser(user);
       setIsLoggedIn(true);
-      setCurrentPage('dashboard');
+      setCurrentPage('upload');
     }
   }, []);
 
@@ -28,7 +33,7 @@ function App() {
   const login = (user) => {
     setCurrentUser(user);
     setIsLoggedIn(true);
-    setCurrentPage('dashboard');
+    setCurrentPage('upload');
   };
 
   const logout = () => {
@@ -50,16 +55,26 @@ function App() {
         return <Results onNavigate={navigate} currentUser={currentUser} />;
       case 'history':
         return <History onNavigate={navigate} currentUser={currentUser} />;
+      case 'profile':
+        return <Profile onNavigate={navigate} currentUser={currentUser} onLogout={logout} />;
+      case 'settings':
+        return <Settings onNavigate={navigate} currentUser={currentUser} onLogout={logout} />;
       default:
         return <Landing onLogin={login} onNavigate={navigate} />;
     }
   };
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   return (
-    <div className="app">
-      {isLoggedIn && <Navbar currentPage={currentPage} onNavigate={navigate} currentUser={currentUser} onLogout={logout} />}
-      {renderPage()}
-    </div>
+    <ThemeProvider>
+      <div className="app">
+        {isLoggedIn && <Navbar currentPage={currentPage} onNavigate={navigate} currentUser={currentUser} onLogout={logout} />}
+        {renderPage()}
+      </div>
+    </ThemeProvider>
   );
 }
 

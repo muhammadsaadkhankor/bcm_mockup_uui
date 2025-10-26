@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import mealService from '../services/meals';
 
 const Results = ({ onNavigate, currentUser }) => {
-  const detectedFoods = [
-    { name: 'Grilled Chicken Breast', calories: 250, protein: 46, carbs: 0, fat: 6 },
-    { name: 'Steamed Rice', calories: 210, protein: 4, carbs: 45, fat: 0.5 },
-    { name: 'Mixed Vegetables', calories: 80, protein: 3, carbs: 16, fat: 0.5 },
-    { name: 'Olive Oil (drizzle)', calories: 40, protein: 0, carbs: 0, fat: 4.5 }
-  ];
-
-  const totalCalories = detectedFoods.reduce((sum, food) => sum + food.calories, 0);
-  const totalProtein = detectedFoods.reduce((sum, food) => sum + food.protein, 0);
-  const totalCarbs = detectedFoods.reduce((sum, food) => sum + food.carbs, 0);
-  const totalFat = detectedFoods.reduce((sum, food) => sum + food.fat, 0);
+  const [estimation, setEstimation] = useState(null);
+  
+  useEffect(() => {
+    const savedEstimation = localStorage.getItem('lastEstimation');
+    if (savedEstimation) {
+      setEstimation(JSON.parse(savedEstimation));
+    }
+  }, []);
+  
+  if (!estimation) {
+    return (
+      <div style={{ padding: '32px 0', minHeight: 'calc(100vh - 80px)', textAlign: 'center' }}>
+        <p>No estimation data found. Please upload an image first.</p>
+        <button className="btn btn-primary" onClick={() => onNavigate('upload')}>Upload Image</button>
+      </div>
+    );
+  }
+  
+  const { totalCalories, confidence, foodItems } = estimation;
 
   const handleSaveToLog = () => {
     const userId = currentUser?.id || 'guest';
@@ -21,10 +29,13 @@ const Results = ({ onNavigate, currentUser }) => {
                     new Date().getHours() < 18 ? 'Snack' : 'Dinner';
     
     mealService.addMeal(userId, {
-      name: detectedFoods.map(f => f.name).join(', '),
+      name: foodItems.map(f => f.name).join(', '),
       calories: totalCalories,
-      type: mealType
+      type: mealType,
+      confidence: confidence
     });
+    
+    localStorage.removeItem('lastEstimation');
     
     setTimeout(() => {
       onNavigate('dashboard');
@@ -50,7 +61,7 @@ const Results = ({ onNavigate, currentUser }) => {
             gap: '16px',
             marginBottom: '32px'
           }}>
-            {detectedFoods.map((food, index) => (
+            {foodItems.map((food, index) => (
               <div key={index} className="card" style={{ padding: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#333' }}>
@@ -68,24 +79,15 @@ const Results = ({ onNavigate, currentUser }) => {
                   </span>
                 </div>
                 <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(3, 1fr)', 
-                  gap: '8px',
+                  textAlign: 'center',
+                  padding: '8px',
+                  background: '#f8f9fa',
+                  borderRadius: '6px',
                   fontSize: '12px',
                   color: '#666'
                 }}>
-                  <div style={{ textAlign: 'center', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
-                    <div style={{ fontWeight: '600', color: '#FF9800' }}>{food.protein}g</div>
-                    <div>Protein</div>
-                  </div>
-                  <div style={{ textAlign: 'center', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
-                    <div style={{ fontWeight: '600', color: '#4CAF50' }}>{food.carbs}g</div>
-                    <div>Carbs</div>
-                  </div>
-                  <div style={{ textAlign: 'center', padding: '8px', background: '#f8f9fa', borderRadius: '6px' }}>
-                    <div style={{ fontWeight: '600', color: '#2196F3' }}>{food.fat}g</div>
-                    <div>Fat</div>
-                  </div>
+                  <div style={{ fontWeight: '600', color: '#4CAF50' }}>{food.weight}{food.unit}</div>
+                  <div>Weight</div>
                 </div>
               </div>
             ))}
@@ -94,7 +96,7 @@ const Results = ({ onNavigate, currentUser }) => {
           <div className="card" style={{ marginBottom: '32px', background: 'linear-gradient(135deg, #4CAF50, #45a049)', color: 'white' }}>
             <div style={{ textAlign: 'center' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px' }}>
-                Total Nutrition
+                Estimated Calories
               </h2>
               <div style={{ 
                 display: 'grid', 
@@ -106,16 +108,8 @@ const Results = ({ onNavigate, currentUser }) => {
                   <div style={{ fontSize: '14px', opacity: 0.9 }}>Calories</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', fontWeight: '600' }}>{totalProtein}g</div>
-                  <div style={{ fontSize: '14px', opacity: 0.9 }}>Protein</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', fontWeight: '600' }}>{totalCarbs}g</div>
-                  <div style={{ fontSize: '14px', opacity: 0.9 }}>Carbs</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', fontWeight: '600' }}>{totalFat.toFixed(1)}g</div>
-                  <div style={{ fontSize: '14px', opacity: 0.9 }}>Fat</div>
+                  <div style={{ fontSize: '24px', fontWeight: '600' }}>{confidence}%</div>
+                  <div style={{ fontSize: '14px', opacity: 0.9 }}>Confidence</div>
                 </div>
               </div>
             </div>

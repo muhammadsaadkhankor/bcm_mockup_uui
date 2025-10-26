@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import mealService from '../services/meals';
-import TipsWidget from './TipsWidget';
 
 const History = ({ onNavigate, currentUser }) => {
+  const { colors } = useTheme();
   const [activeFilter, setActiveFilter] = useState('Today');
   const userId = currentUser?.id || 'guest';
   const userMeals = mealService.getTodaysMeals(userId);
@@ -150,36 +151,14 @@ const History = ({ onNavigate, currentUser }) => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: 'calc(100vh - 80px)' }}>
-      <div style={{
-        width: '280px',
-        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
-        borderRight: '1px solid #e0e0e0',
-        padding: '32px 20px'
-      }}>
-        <h3 style={{ 
-          fontSize: '18px', 
-          fontWeight: '600', 
-          color: '#4CAF50',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <i className="fas fa-lightbulb"></i>
-          Healthy Tips
-        </h3>
-        <TipsWidget />
-      </div>
-      
-      <div style={{ flex: 1, padding: '32px' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div className="mobile-safe-area" style={{ padding: '20px 0', minHeight: '100vh', background: colors.background }}>
+      <div className="container">
           <div style={{ marginBottom: '32px' }}>
             <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '8px' }}>
               Meal History
             </h1>
             <p style={{ color: '#666', fontSize: '16px' }}>
-              Track your nutrition progress over time
+              Track your calorie intake over time
             </p>
           </div>
 
@@ -255,7 +234,6 @@ const History = ({ onNavigate, currentUser }) => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

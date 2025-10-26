@@ -9,43 +9,22 @@ const Dashboard = ({ onNavigate, currentUser }) => {
   const totalCalories = mealService.getTotalCaloriesToday(userId);
   
   return (
-    <div style={{ display: 'flex', minHeight: 'calc(100vh - 80px)' }}>
-      <div style={{
-        width: '280px',
-        background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
-        borderRight: '1px solid #e0e0e0',
-        padding: '32px 20px'
-      }}>
-        <h3 style={{ 
-          fontSize: '18px', 
-          fontWeight: '600', 
-          color: '#4CAF50',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <i className="fas fa-lightbulb"></i>
-          Healthy Tips
-        </h3>
-        <TipsWidget />
-      </div>
-      
-      <div style={{ flex: 1, padding: '32px' }}>
-        <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '8px' }}>
+    <div className="mobile-safe-area" style={{ padding: '20px 0', minHeight: '100vh' }}>
+      <div className="container">
+        <div style={{ marginBottom: '24px', padding: '16px 0' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#333', marginBottom: '8px' }}>
             Good morning, {userName}!
           </h1>
-          <p style={{ color: '#666', fontSize: '16px' }}>
+          <p style={{ color: '#666', fontSize: '14px' }}>
             Let's track your nutrition goals today
           </p>
         </div>
 
         <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '24px',
-          marginBottom: '32px'
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          marginBottom: '24px'
         }}>
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>

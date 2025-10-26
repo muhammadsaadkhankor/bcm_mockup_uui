@@ -1,148 +1,184 @@
 import React from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = ({ currentPage, onNavigate, currentUser, onLogout }) => {
+  const { colors, isDarkMode } = useTheme();
   return (
-    <nav style={{
-      background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-      padding: '16px 0',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      borderBottom: '1px solid rgba(76, 175, 80, 0.1)'
-    }}>
-      <div className="container">
+    <>
+      {/* Glassmorphism Navigation Bar */}
+      <nav style={{
+        background: isDarkMode ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.12)',
+        padding: '16px 0 24px 0',
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        borderTop: `1px solid ${colors.border}`
+      }}>
+        {/* Navigation Container */}
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          maxWidth: '100%',
+          position: 'relative',
+          padding: '0 20px'
         }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px',
-            padding: '8px 16px',
-            borderRadius: '12px',
-            background: 'white',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-            border: '1px solid #e0e0e0'
-          }}>
-            <img src="/bcm.png" alt="BCM" style={{ height: '40px', width: 'auto' }} />
-            <span style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: '#333',
-              textShadow: 'none'
-            }}>BCM</span>
-          </div>
-          
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <a 
-              href="#" 
-              onClick={(e) => { e.preventDefault(); onNavigate('dashboard'); }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                borderRadius: '25px',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                background: currentPage === 'dashboard' ? 'linear-gradient(135deg, #4CAF50, #45a049)' : 'transparent',
-                color: currentPage === 'dashboard' ? 'white' : '#666',
-                boxShadow: currentPage === 'dashboard' ? '0 2px 8px rgba(76, 175, 80, 0.3)' : 'none'
-              }}
-            >
-              <i className="fas fa-home" style={{ fontSize: '16px' }}></i>
-              <span className="nav-text">Home</span>
-            </a>
-            
-            <a 
-              href="#" 
-              onClick={(e) => { e.preventDefault(); onNavigate('upload'); }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                borderRadius: '25px',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                background: currentPage === 'upload' ? 'linear-gradient(135deg, #FF9800, #f57c00)' : 'transparent',
-                color: currentPage === 'upload' ? 'white' : '#666',
-                boxShadow: currentPage === 'upload' ? '0 2px 8px rgba(255, 152, 0, 0.3)' : 'none'
-              }}
-            >
-              <i className="fas fa-plus" style={{ fontSize: '16px' }}></i>
-              <span className="nav-text">Add Meal</span>
-            </a>
-            
-            <a 
-              href="#" 
-              onClick={(e) => { e.preventDefault(); onNavigate('history'); }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                borderRadius: '25px',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                background: currentPage === 'history' ? 'linear-gradient(135deg, #2196F3, #1976D2)' : 'transparent',
-                color: currentPage === 'history' ? 'white' : '#666',
-                boxShadow: currentPage === 'history' ? '0 2px 8px rgba(33, 150, 243, 0.3)' : 'none'
-              }}
-            >
-              <i className="fas fa-history" style={{ fontSize: '16px' }}></i>
-              <span className="nav-text">History</span>
-            </a>
-            
+          {/* Upload/Camera Tab */}
+          <button 
+            onClick={() => onNavigate('upload')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '12px 16px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              color: currentPage === 'upload' ? '#4CAF50' : '#8E8E93',
+              minWidth: '70px'
+            }}
+          >
             <div style={{
-              width: '1px',
-              height: '30px',
-              background: 'linear-gradient(to bottom, transparent, #e0e0e0, transparent)',
-              margin: '0 8px'
-            }}></div>
-            
-            <button
-              onClick={onLogout}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                borderRadius: '25px',
-                background: 'linear-gradient(135deg, #f44336, #d32f2f)',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(244, 67, 54, 0.2)'
-              }}
-            >
-              <i className="fas fa-sign-out-alt" style={{ fontSize: '16px' }}></i>
-              <span className="nav-text">Logout</span>
-            </button>
-          </div>
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '12px',
+              background: currentPage === 'upload' 
+                ? '#4CAF50' 
+                : 'rgba(142, 142, 147, 0.1)',
+              transition: 'all 0.3s ease'
+            }}>
+              <i className="fas fa-camera" style={{ 
+                fontSize: '18px',
+                color: currentPage === 'upload' ? 'white' : '#8E8E93'
+              }}></i>
+            </div>
+            <span>Scan</span>
+          </button>
+          
+          {/* History Tab */}
+          <button 
+            onClick={() => onNavigate('history')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '12px 16px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              color: currentPage === 'history' ? '#4CAF50' : '#8E8E93',
+              minWidth: '70px'
+            }}
+          >
+            <div style={{
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '12px',
+              background: currentPage === 'history' 
+                ? 'rgba(76, 175, 80, 0.15)' 
+                : 'transparent',
+              transition: 'all 0.3s ease'
+            }}>
+              <i className="fas fa-history" style={{ 
+                fontSize: '18px',
+                color: currentPage === 'history' ? '#4CAF50' : '#8E8E93'
+              }}></i>
+            </div>
+            <span>History</span>
+          </button>
+          
+          {/* Profile Tab */}
+          <button 
+            onClick={() => onNavigate('profile')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '12px 16px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              color: currentPage === 'profile' ? '#4CAF50' : '#8E8E93',
+              minWidth: '70px'
+            }}
+          >
+            <div style={{
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '12px',
+              background: currentPage === 'profile' 
+                ? 'rgba(76, 175, 80, 0.15)' 
+                : 'transparent',
+              transition: 'all 0.3s ease'
+            }}>
+              <i className="fas fa-user" style={{ 
+                fontSize: '18px',
+                color: currentPage === 'profile' ? '#4CAF50' : '#8E8E93'
+              }}></i>
+            </div>
+            <span>Profile</span>
+          </button>
         </div>
-      </div>
+        
+        {/* Home Indicator */}
+        <div style={{
+          width: '134px',
+          height: '5px',
+          borderRadius: '3px',
+          background: 'rgba(0, 0, 0, 0.3)',
+          margin: '8px auto 0',
+          opacity: 0.6
+        }} />
+      </nav>
       
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .nav-text {
-            display: none;
+
+      
+      {/* CSS Animations */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.2);
+              opacity: 0.7;
+            }
+            100% {
+              transform: scale(1.4);
+              opacity: 0;
+            }
           }
-        }
-      `}</style>
-    </nav>
+        `}
+      </style>
+    </>
   );
 };
 
