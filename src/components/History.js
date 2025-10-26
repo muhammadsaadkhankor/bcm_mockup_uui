@@ -83,13 +83,19 @@ const History = ({ onNavigate, currentUser }) => {
   const renderWeekView = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {mealHistory.Week.map((day, index) => (
-        <div key={index} className="card" style={{ padding: '20px' }}>
+        <div key={index} style={{ 
+          padding: '20px', 
+          background: colors.surface,
+          borderRadius: '12px',
+          boxShadow: `0 2px 8px ${colors.shadow}`,
+          border: `1px solid ${colors.border}`
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#333', marginBottom: '4px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', color: colors.text, marginBottom: '4px' }}>
                 {day.date}
               </h3>
-              <p style={{ fontSize: '14px', color: '#666' }}>
+              <p style={{ fontSize: '14px', color: colors.textSecondary }}>
                 {day.meals} meals logged
               </p>
             </div>
@@ -113,13 +119,19 @@ const History = ({ onNavigate, currentUser }) => {
   const renderMonthView = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {mealHistory.Month.map((week, index) => (
-        <div key={index} className="card" style={{ padding: '20px' }}>
+        <div key={index} style={{ 
+          padding: '20px', 
+          background: colors.surface,
+          borderRadius: '12px',
+          boxShadow: `0 2px 8px ${colors.shadow}`,
+          border: `1px solid ${colors.border}`
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#333', marginBottom: '4px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '600', color: colors.text, marginBottom: '4px' }}>
                 {week.week}
               </h3>
-              <p style={{ fontSize: '14px', color: '#666' }}>
+              <p style={{ fontSize: '14px', color: colors.textSecondary }}>
                 {week.totalMeals} meals logged
               </p>
             </div>
@@ -127,7 +139,7 @@ const History = ({ onNavigate, currentUser }) => {
               <div style={{ fontSize: '18px', fontWeight: '700', color: '#4CAF50' }}>
                 {week.avgCalories} kcal
               </div>
-              <div style={{ fontSize: '12px', color: '#666' }}>
+              <div style={{ fontSize: '12px', color: colors.textSecondary }}>
                 avg per day
               </div>
             </div>
@@ -166,7 +178,7 @@ const History = ({ onNavigate, currentUser }) => {
             display: 'flex', 
             gap: '8px', 
             marginBottom: '32px',
-            background: '#f8f9fa',
+            background: colors.surface,
             padding: '4px',
             borderRadius: '12px',
             width: 'fit-content'
@@ -184,7 +196,7 @@ const History = ({ onNavigate, currentUser }) => {
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   background: activeFilter === filter ? '#4CAF50' : 'transparent',
-                  color: activeFilter === filter ? 'white' : '#666'
+                  color: activeFilter === filter ? 'white' : colors.textSecondary
                 }}
               >
                 {filter}
